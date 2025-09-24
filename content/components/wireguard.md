@@ -158,16 +158,56 @@ Incoming connections are not affected by `netmask`.
 
 Let's explain with some examples:
 
-| address      | netmask                      | allowed ips                                    | working outgoing connections                                                                                                               |
-| ------------ | ---------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| 172.16.0.100 | *omitted* or 255.255.255.255 | *omitted* or any other value                   | **none**, no routes are created                                                                                                            |
-|              | 255.255.255.0                | *omitted*                                      | only to `172.16.0.0/24`                                                                                                                    |
-| | | - 172.16.0.0/24 - 192.168.0.0/24 - *any other* | and any other network will be outside `172.16.0.0/24`                                                                                      |
-| | | - 192.168.0.0/24 | **none** because `192.168.0.0/24` is not part of `172.16.0.0/24`                                                                           |
-| 10.44.0.100 | 255.0.0.0 | *omitted* | to `10.0.0.0/8` network |
-| | | - 10.44.0.0/16 - 10.10.0.0/16 | only to the networks in the allowed list because the netmask will route the whole `10.0.0.0/8` but wireguard allows only those two subnets |
-| any | 0.0.0.0 | *omitted* | **any** |
-| | | - 172.16.0.0/24 - 10.44.0.0/16 - 10.10.0.0/16 | to any network that is in the list of allowed IPs because the netmask will route any traffic but wireguard allows only its own list |
+<table>
+  <thead>
+      <tr>
+          <th>address</th>
+          <th>netmask</th>
+          <th>allowed ips</th>
+          <th>working outgoing connections</th>
+      </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="4">172.16.0.100</td>
+      <td><em>omitted</em> or 255.255.255.255</td>
+      <td><em>omitted</em> or any other value</td>
+      <td><strong>none</strong>, no routes are created</td>
+    </tr>
+    <tr>
+      <td rowspan="3">255.255.255.0</td>
+      <td><em>omitted</em></td>
+      <td rowspan="2">only to <code>172.16.0.0/24</code><br/> because <code>192.168.0.0/24</code> and any other network<br/> will be outside of <code>172.16.0.0/24</code></td>
+    </tr>
+    <tr>
+      <td>- 172.16.0.0/24<br/>- 192.168.0.0/24<br/>- <em>any other</em></td>
+    </tr>
+    <tr>
+      <td>- 192.168.0.0/24</td>
+      <td><strong>none</strong> because <code>192.168.0.0/24</code><br/> is not part of <code>172.16.0.0/24</code></td>
+    </tr>
+    <tr>
+      <td rowspan="2">10.44.0.100</td>
+      <td rowspan="2">255.0.0.0</td>
+      <td><em>omitted</em></td>
+      <td>to <code>10.0.0.0/8</code> network</td>
+    </tr>
+    <tr>
+      <td>- 10.44.0.0/16<br/>- 10.10.0.0/16</td>
+      <td>only to the networks in the allowed list<br/> because the netmask will route the whole <code>10.0.0.0/8</code><br/> but wireguard allows only those two subnets</td>
+    </tr>
+    <tr>
+      <td rowspan="2">any</td>
+      <td rowspan="2">0.0.0.0</td>
+      <td><em>omitted</em></td>
+      <td><strong>any</strong></td>
+    </tr>
+    <tr>
+      <td>- 172.16.0.0/24<br/>- 10.44.0.0/16<br/>- 10.10.0.0/16</td>
+      <td>to any network that is in the list of allowed IPs<br/> because the netmask will route any traffic<br/> but wireguard allows only its own list</td>
+    </tr>
+  </tbody>
+</table>
 
 {{< note >}}
 Setting the `netmask` to `0.0.0.0` has the effect of routing
